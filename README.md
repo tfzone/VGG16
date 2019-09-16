@@ -1,18 +1,28 @@
 ﻿# [VGG16](https://github.com/tfzoo/VGG16) 
-
-[![sites](tfzoo/tfzoo.png)](http://www.tfzoo.com)
-
-## [简介](https://github.com/tfzoo/VGG16/wiki) 
+## [VGG16简介](https://github.com/tfzoo/VGG16/wiki) 
 
 VGG卷积神经网络是牛津大学在2014年提出来的模型。当这个模型被提出时，由于它的简洁性和实用性，马上成为了当时最流行的卷积神经网络模型。它在图像分类和目标检测任务中都表现出非常好的结果。在2014年的ILSVRC比赛中，VGG 在Top-5中取得了92.3%的正确率。
 
-### 参考资源
+VGG中根据卷积核大小和卷积层数目的不同，可分为A，A-LRN,B,C,D,E共6个配置(ConvNet Configuration)，其中以D,E两种配置较为常用，分别称为VGG16（包含了16个隐藏层，13个卷积层和3个全连接层）和VGG19（包含了19个隐藏层，16个卷积层和3个全连接层）。
 
-[VGG19 and VGG16 on Tensorflow](https://github.com/machrisaa/tensorflow-vgg) 
+VGG16的突出特点是简单，体现在：
 
-[TensorFlow VGG-16 pre-trained model](https://github.com/ry/tensorflow-vgg16) 
+* 卷积层均采用相同的卷积核参数
 
----
+* 卷积层均表示为conv3-XXX，其中conv3说明该卷积层采用的卷积核的尺寸(kernel size)是3，即宽（width）和高（height）均为3，3*3是很小的卷积核尺寸，结合其它参数（步幅stride=1，填充方式padding=same），这样就能够使得每一个卷积层(张量)与前一层（张量）保持相同的宽和高。XXX代表卷积层的通道数。
+* 池化层均采用相同的池化核参数，池化层的参数均为2×
+* 模型是由若干卷积层和池化层堆叠（stack）的方式构成，比较容易形成较深的网络结构（在2014年，16层已经被认为很深了）。
 
-###  www.tfzoo.com 
-####  qitas@qitas.cn
+综合上述分析，可以概括VGG的优点为: Small filters, Deeper networks.
+
+VGG16相比AlexNet的一个改进是采用连续的几个3x3的卷积核代替AlexNet中的较大卷积核（11x11，7x7，5x5）。对于给定的感受野（与输出有关的输入图片的局部大小），采用堆积的小卷积核是优于采用大的卷积核，因为多层非线性层可以增加网络深度来保证学习更复杂的模式，而且代价还比较小（参数更少）。
+
+简单来说，在VGG中，使用了3个3x3卷积核来代替7x7卷积核，使用了2个3x3卷积核来代替5*5卷积核，这样做的主要目的是在保证具有相同感知野的条件下，提升了网络的深度，在一定程度上提升了神经网络的效果。
+
+比如，3个步长为1的3x3卷积核的一层层叠加作用可看成一个大小为7的感受野（其实就表示3个3x3连续卷积相当于一个7x7卷积），其参数总量为 3x(9xC^2) ，如果直接使用7x7卷积核，其参数总量为 49xC^2 ，这里 C 指的是输入和输出的通道数。很明显，27xC2小于49xC2，即减少了参数；而且3x3卷积核有利于更好地保持图像性质。
+
+VGG耗费更多计算资源，并且使用了更多的参数（这里不是3x3卷积的锅），导致更多的内存占用（140M）。其中绝大多数的参数都是来自于第一个全连接层。VGG可是有3个全连接层啊！
+
+###  [天府动物园 tfzoo：tensorflow models zoo](http://www.tfzoo.com)
+####   qitas@qitas.cn
+[![sites](tfzoo/tfzoo.png)](http://www.tfzoo.com)
